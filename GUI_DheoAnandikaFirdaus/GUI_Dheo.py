@@ -1,49 +1,50 @@
-import tkinter as tk
-from tkinter import messagebox
-import matplotlib.pyplot as plt
-import numpy as np
+import tkinter as tk                  # impor tkinter untuk GUI
+from tkinter import messagebox         # impor messagebox untuk pesan error
+import matplotlib.pyplot as plt        # impor matplotlib untuk plotting
+from mpl_toolkits.mplot3d import Axes3D # aktifkan fitur 3D matplotlib
+import numpy as np                     # impor numpy untuk operasi matematika
 
-def plot_kuadrat():
+# fungsi untuk menampilkan plot 3D
+def plot_sinus_3d():
     try:
-        a = float(entry_a.get())
-        b = float(entry_b.get())
-        c = float(entry_c.get())
+        freq = float(entry_freq.get())  # ambil nilai frekuensi dari input
+        amp = float(entry_amp.get())    # ambil nilai amplitudo dari input
 
-        x = np.linspace(-10, 10, 200)
-        y = a*x**2 + b*x + c
+        x = np.linspace(-10, 10, 200)   # buat data x dari -10 sampai 10
+        y = np.linspace(-10, 10, 200)   # buat data y dari -10 sampai 10
+        X, Y = np.meshgrid(x, y)        # buat grid koordinat X dan Y
+        R = np.sqrt(X**2 + Y**2)        # hitung jarak dari pusat (radius)
+        Z = amp * np.sin(freq * R)      # rumus fungsi sinus
 
-        plt.plot(x, y, label=f"{a}x² + {b}x + {c}")
-        plt.title("Plot Fungsi Kuadrat")
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        fig = plt.figure()              # buat figure baru
+        ax = fig.add_subplot(111, projection='3d')  # aktifkan mode 3D
+        ax.plot_surface(X, Y, Z, cmap='plasma')     # gambar permukaan 3D
+        ax.set_title("Plot 3D Fungsi Sin")   # judul grafik
+        ax.set_xlabel("X")              # label sumbu X
+        ax.set_ylabel("Y")              # label sumbu Y
+        ax.set_zlabel("Z")              # label sumbu Z
+        plt.show()                      # tampilkan grafik
 
     except ValueError:
-        messagebox.showerror("Error", "Masukkan angka yang valid!")
+        messagebox.showerror("Error", "Masukkan angka valid!")  # pesan jika input salah
 
-# GUI window
+# buat jendela utama
 root = tk.Tk()
-root.title("Plot Fungsi Kuadrat")
+root.title("Plot 3D Fungsi Sin")
 
-tk.Label(root, text="Masukkan koefisien fungsi y = ax² + bx + c").pack(pady=10)
+tk.Label(root, text="Masukkan parameter fungsi z = A·sin(f·√(x² + y²))").pack(pady=10)
 
-frame = tk.Frame(root)
+frame = tk.Frame(root)        # buat frame input
 frame.pack()
 
-tk.Label(frame, text="a:").grid(row=0, column=0)
-entry_a = tk.Entry(frame)
-entry_a.grid(row=0, column=1)
+tk.Label(frame, text="Frekuensi (f) = ").grid(row=0, column=0)   # label frekuensi
+entry_freq = tk.Entry(frame)                                  # input frekuensi
+entry_freq.grid(row=0, column=1)
 
-tk.Label(frame, text="b:").grid(row=1, column=0)
-entry_b = tk.Entry(frame)
-entry_b.grid(row=1, column=1)
+tk.Label(frame, text="Amplitudo (A) = ").grid(row=1, column=0)   # label amplitudo
+entry_amp = tk.Entry(frame)                                   # input amplitudo
+entry_amp.grid(row=1, column=1)
 
-tk.Label(frame, text="c:").grid(row=2, column=0)
-entry_c = tk.Entry(frame)
-entry_c.grid(row=2, column=1)
+tk.Button(root, text="Plot 3D", command=plot_sinus_3d).pack(pady=10)  # tombol untuk plot
 
-tk.Button(root, text="Plot", command=plot_kuadrat).pack(pady=10)
-
-root.mainloop()
+root.mainloop()  # jalankan GUI
